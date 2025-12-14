@@ -1,0 +1,14 @@
+# IntelliJ project files (Cấu hình riêng không nên share)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Build folders (Nếu sau này dùng Maven/Gradle)
+target/
+build/
+
+# System files
+.DS_Store
+Thumbs.db
