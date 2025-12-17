@@ -6,13 +6,13 @@ const USERS = {
     'frieza': { pass: '123', role: 'client', name: 'Frieza (Client)', avatar: 'assets/frieza.png', email: 'frieza@empire.com', rate: 0, skills: {} }
 };
 
-// Khởi tạo dữ liệu mẫu nếu chưa có
+// Khởi tạo dữ liệu
 function initDB() {
     if (!localStorage.getItem('techForgeTasks')) {
+        const now = new Date().toISOString();
         const defaultTasks = [
-            { id: 'T-101', name: 'DB Schema Design', status: 'todo', priority: 'high' },
-            { id: 'T-105', name: 'API Auth Module', status: 'doing', priority: 'high' },
-            { id: 'T-099', name: 'Req Gathering', status: 'done', priority: 'low' }
+            { id: 'T-101', name: 'DB Schema Design', project: 'E-Commerce Super App', description: 'Design SQL tables for Users and Orders.', status: 'todo', priority: 'high', timestamp: now },
+            { id: 'T-105', name: 'API Auth Module', project: 'E-Commerce Super App', description: 'Implement JWT Authentication.', status: 'doing', priority: 'high', timestamp: now }
         ];
         localStorage.setItem('techForgeTasks', JSON.stringify(defaultTasks));
     }
@@ -57,15 +57,12 @@ function loadUserWorkspace() {
 
     const userData = USERS[userKey];
     document.getElementById('currentUser').innerText = userData.name;
-
     const avatarEl = document.getElementById('userAvatar');
     avatarEl.src = userData.avatar;
     avatarEl.onerror = function() { this.src = 'https://via.placeholder.com/40'; };
 
-    // Ẩn tất cả nav item
     document.querySelectorAll('.nav-item').forEach(el => el.style.display = 'none');
 
-    // Hiển thị nav item theo role và load view tương ứng
     if (userData.role === 'manager') {
         document.getElementById('nav-manager').style.display = 'flex';
         switchView('manager', document.getElementById('nav-manager'));
@@ -87,8 +84,6 @@ function logout() {
 }
 
 // --- 3. CORE LOGIC & SYNC ---
-
-// Hàm chuyển View và Render lại dữ liệu mới nhất
 function switchView(viewId, element) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -96,16 +91,13 @@ function switchView(viewId, element) {
     document.getElementById(viewId).classList.add('active');
     if(element) element.classList.add('active');
 
-    // Tự động tải lại dữ liệu khi chuyển tab
     if(viewId === 'manager') renderProjects();
     if(viewId === 'employee') renderKanban();
     if(viewId === 'admin') renderPayroll();
     if(viewId === 'client') setTimeout(renderClientDashboard, 100);
 }
 
-// *** MAGIC SYNC: Lắng nghe thay đổi từ các tab khác ***
 window.addEventListener('storage', (event) => {
-    // Nếu dữ liệu Tasks, Payroll hoặc Projects thay đổi -> Render lại giao diện ngay lập tức
     const currentView = document.querySelector('.view.active').id;
     if (currentView === 'manager') renderProjects();
     if (currentView === 'employee') renderKanban();
@@ -113,7 +105,7 @@ window.addEventListener('storage', (event) => {
     if (currentView === 'client') renderClientDashboard();
 });
 
-// --- 4. FEATURE: MANAGER (PROJECTS) ---
+// --- 4. FEATURE: MANAGER (PROJECTS & ASSIGNMENT) ---
 function renderProjects() {
     const projects = JSON.parse(localStorage.getItem('techForgeProjects')) || [];
     const tbody = document.getElementById('projectTableBody');
@@ -121,38 +113,106 @@ function renderProjects() {
 
     projects.forEach(p => {
         const badgeClass = p.status === 'Planning' ? 'status-planning' : 'status-active';
+        // [UPDATE] Gọi prepareAssignment với tên Project
         const row = `<tr>
             <td><strong>${p.name}</strong></td>
             <td>${p.client}</td>
             <td>$${parseInt(p.budget).toLocaleString()}</td>
             <td>${p.deadline}</td>
             <td><span class="status-badge ${badgeClass}">${p.status}</span></td>
-            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="openModal('assignTaskModal')">Manage</button></td>
+            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="prepareAssignment('${p.name}')">Manage</button></td>
         </tr>`;
         tbody.innerHTML += row;
     });
+}
+
+// [NEW] Chuẩn bị modal gán việc cho project cụ thể
+function prepareAssignment(projectName) {
+    document.getElementById('assignProjectRef').value = projectName;
+    document.getElementById('assignTaskInput').value = ""; // Clear cũ
+    document.getElementById('assignTaskDesc').value = "";
+
+    // Reset UI AI scan
+    document.getElementById('scanBtnContainer').style.display = 'block';
+    document.getElementById('aiStaffResult').style.display = 'none';
+    document.getElementById('assignActionBtns').style.display = 'none';
+
+    openModal('assignTaskModal');
 }
 
 function saveProject() {
     const name = document.getElementById('projName').value;
     const budget = document.getElementById('projBudget').value;
     const deadline = document.getElementById('projDeadline').value;
+    const email = document.getElementById('clientEmail').value;
 
-    if(!name || !budget) return alert("Missing info!");
+    if(!name || !budget || !deadline || !email) { alert("Please fill in all fields!"); return; }
+
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(email)) {
+        alert("Invalid Email! Only @gmail.com is allowed.");
+        return;
+    }
 
     const projects = JSON.parse(localStorage.getItem('techForgeProjects')) || [];
-    projects.push({ name, client: "New Client", budget, deadline, status: "Planning" });
+    projects.push({ name, client: email, budget, deadline, status: "Planning" });
     localStorage.setItem('techForgeProjects', JSON.stringify(projects));
+
+    // Auto create setup task
+    const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
+    tasks.push({
+        id: `T-${Date.now()}`,
+        name: "Setup Env for " + name,
+        project: name,
+        description: "Initialize repository and server environment.",
+        status: 'todo', priority: 'high', timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('techForgeTasks', JSON.stringify(tasks));
 
     renderProjects();
     closeModal('createProjectModal');
-    // Sinh ra task mặc định cho project mới
-    const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
-    tasks.push({ id: `T-${Date.now()}`, name: "Setup Env for " + name, status: 'todo', priority: 'high' });
-    localStorage.setItem('techForgeTasks', JSON.stringify(tasks));
+    alert(`Project "${name}" created!`);
 }
 
-// --- 5. FEATURE: EMPLOYEE (KANBAN) ---
+function scanStaffAI() {
+    const btn = document.querySelector('#scanBtnContainer button');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+    setTimeout(() => {
+        document.getElementById('scanBtnContainer').style.display = 'none';
+        document.getElementById('aiStaffResult').style.display = 'block';
+        document.getElementById('assignActionBtns').style.display = 'block';
+    }, 1000);
+}
+
+// [UPDATED] Gán việc với dữ liệu thật từ Input
+function confirmAssignment() {
+    const taskName = document.getElementById('assignTaskInput').value;
+    const taskDesc = document.getElementById('assignTaskDesc').value;
+    const projectName = document.getElementById('assignProjectRef').value;
+
+    if(!taskName) {
+        alert("Please enter a Task Name!");
+        return;
+    }
+
+    const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
+    tasks.push({
+        id: `T-${Date.now().toString().slice(-4)}`,
+        name: taskName,
+        project: projectName,
+        description: taskDesc || "No description provided.",
+        status: 'todo',
+        priority: 'med',
+        timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('techForgeTasks', JSON.stringify(tasks));
+
+    alert(`Task "${taskName}" assigned to Goku for project "${projectName}"!`);
+    closeModal('assignTaskModal');
+    renderKanban();
+}
+
+// --- 5. FEATURE: EMPLOYEE (KANBAN & DETAILS) ---
 function renderKanban() {
     const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
     const cols = {
@@ -161,7 +221,6 @@ function renderKanban() {
         'done': document.getElementById('done-list')
     };
 
-    // Clear lists but keep headers
     Object.values(cols).forEach(col => {
         const header = col.querySelector('.kanban-header');
         col.innerHTML = '';
@@ -179,10 +238,14 @@ function renderKanban() {
             card.id = task.id;
             card.draggable = true;
             card.ondragstart = drag;
+            // [UPDATE] Thêm onclick để xem chi tiết
+            card.onclick = function() { viewTask(task.id); };
             card.style.borderLeftColor = borderLeft;
+            card.style.cursor = "pointer"; // Hand cursor
 
             card.innerHTML = `
                 <div style="font-weight: 700; margin-bottom: 5px;">${task.name}</div>
+                <div style="font-size: 0.8rem; color: var(--secondary); margin-bottom: 3px;">${task.project || 'General'}</div>
                 <div style="font-size: 0.85rem; color: var(--text-light); display: flex; justify-content: space-between;">
                     <span><i class="fas fa-hashtag"></i> ${task.id}</span>
                 </div>`;
@@ -190,10 +253,32 @@ function renderKanban() {
         }
     });
 
-    // Update badges
     document.getElementById('count-todo').innerText = counts['todo'];
     document.getElementById('count-doing').innerText = counts['doing'];
     document.getElementById('count-done').innerText = counts['done'];
+}
+
+// [NEW] Hàm xem chi tiết Task
+function viewTask(taskId) {
+    const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
+    const task = tasks.find(t => t.id === taskId);
+
+    if(task) {
+        document.getElementById('detailTitle').innerText = task.name;
+        document.getElementById('detailProject').innerText = task.project || "General";
+        document.getElementById('detailStatus').innerText = task.status.toUpperCase();
+        document.getElementById('detailDesc').innerText = task.description || "No description.";
+        document.getElementById('detailPriority').innerText = task.priority.toUpperCase();
+
+        // Đổi màu badge status
+        const statusBadge = document.getElementById('detailStatus');
+        statusBadge.className = 'status-badge';
+        if(task.status === 'todo') statusBadge.classList.add('status-planning');
+        else if(task.status === 'doing') statusBadge.classList.add('status-active');
+        else statusBadge.style.backgroundColor = '#E0F2FE';
+
+        openModal('taskDetailModal');
+    }
 }
 
 // Drag & Drop Logic
@@ -209,7 +294,8 @@ function drop(ev, newStatus) {
     const taskIndex = tasks.findIndex(t => t.id === taskId);
     if(taskIndex > -1) {
         tasks[taskIndex].status = newStatus;
-        localStorage.setItem('techForgeTasks', JSON.stringify(tasks)); // Sync Trigger
+        tasks[taskIndex].timestamp = new Date().toISOString();
+        localStorage.setItem('techForgeTasks', JSON.stringify(tasks));
         renderKanban();
     }
 }
@@ -222,16 +308,16 @@ function saveLogTime() {
 
     if(userObj) {
         let payroll = JSON.parse(localStorage.getItem('techForgePayroll')) || [];
-        // Check pending record
         let entry = payroll.find(p => p.user === userKey && p.status === 'Pending');
         if(entry) {
             entry.hours += hours;
         } else {
             payroll.push({ user: userKey, role: userObj.role, hours: hours, rate: userObj.rate, status: 'Pending' });
         }
-        localStorage.setItem('techForgePayroll', JSON.stringify(payroll)); // Sync Trigger
+        localStorage.setItem('techForgePayroll', JSON.stringify(payroll));
         alert("Time logged successfully!");
         closeModal('logTimeModal');
+        renderPayroll();
     }
 }
 
@@ -261,7 +347,8 @@ function renderPayroll() {
         </tr>`;
         tbody.innerHTML += row;
     });
-    document.getElementById('totalPendingPayroll').innerText = '$' + totalPending.toLocaleString();
+    const totalEl = document.getElementById('totalPendingPayroll');
+    if(totalEl) totalEl.innerText = '$' + totalPending.toLocaleString();
 }
 
 function processPayment() {
@@ -274,7 +361,7 @@ function processPayment() {
         }
     });
     if(paidSomething) {
-        localStorage.setItem('techForgePayroll', JSON.stringify(payroll)); // Sync Trigger
+        localStorage.setItem('techForgePayroll', JSON.stringify(payroll));
         renderPayroll();
         alert("All pending payments processed via MoMo!");
     } else {
@@ -288,14 +375,11 @@ let teamChart, ganttChart;
 
 function renderClientDashboard() {
     const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
-
-    // Tính toán số liệu thật từ Tasks
     const todoCount = tasks.filter(t => t.status === 'todo').length;
     const doingCount = tasks.filter(t => t.status === 'doing').length;
     const doneCount = tasks.filter(t => t.status === 'done').length;
     const total = todoCount + doingCount + doneCount;
 
-    // Vẽ lại biểu đồ Team Progress (Dựa trên trạng thái)
     const ctxTeam = document.getElementById('teamProgressChart').getContext('2d');
     if (teamChart) teamChart.destroy();
 
@@ -313,7 +397,6 @@ function renderClientDashboard() {
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 
-    // Vẽ lại Gantt Chart (Giả lập tiến độ dựa trên % hoàn thành)
     const completionRate = total === 0 ? 0 : Math.round((doneCount / total) * 100);
     const ctxGantt = document.getElementById('projectGanttChart').getContext('2d');
     if (ganttChart) ganttChart.destroy();
@@ -338,16 +421,86 @@ function renderClientDashboard() {
                 }
             ]
         },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { x: { max: 100 } }
-        }
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { max: 100 } } }
     });
+
+    renderLiveActivity();
 }
 
-// --- 8. UTILITIES (MODALS, TIMERS, ETC) ---
+function renderLiveActivity() {
+    const listContainer = document.getElementById('activityList');
+    const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
+
+    const startDateVal = document.getElementById('reportStartDate').value;
+    const endDateVal = document.getElementById('reportEndDate').value;
+
+    const start = startDateVal ? new Date(startDateVal) : null;
+    const end = endDateVal ? new Date(endDateVal) : null;
+    if(end) end.setHours(23, 59, 59);
+
+    listContainer.innerHTML = '';
+
+    const activities = tasks.filter(t => t.status === 'done' || t.status === 'doing').sort((a, b) => {
+        return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+    });
+
+    let displayCount = 0;
+
+    activities.forEach(t => {
+        const tDate = t.timestamp ? new Date(t.timestamp) : new Date();
+
+        let isVisible = true;
+        if (start && tDate < start) isVisible = false;
+        if (end && tDate > end) isVisible = false;
+
+        if (isVisible) {
+            displayCount++;
+            const icon = t.status === 'done'
+                ? '<div style="width:30px; height:30px; background:#DCFCE7; color:#16A34A; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="fas fa-check"></i></div>'
+                : '<div style="width:30px; height:30px; background:#FEF3C7; color:#D97706; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="fas fa-spinner"></i></div>';
+
+            const dateStr = tDate.toLocaleDateString() + ' ' + tDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            const item = `
+                <li style="padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px dashed #eee; display: flex; gap: 10px; animation: slideIn 0.3s;">
+                    ${icon}
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-main);">${t.name} (${t.status.toUpperCase()})</div>
+                        <div style="font-size:0.8rem; color:var(--secondary);">${t.project || ''}</div>
+                        <div style="color: var(--text-light); font-size: 0.8rem;">Updated: ${dateStr}</div>
+                    </div>
+                </li>
+            `;
+            listContainer.insertAdjacentHTML('beforeend', item);
+        }
+    });
+
+    if (displayCount === 0) {
+        listContainer.innerHTML = '<li style="text-align:center; color:#999; padding:20px;">No activities found.</li>';
+    }
+}
+
+function clearActivityFilter() {
+    document.getElementById('reportStartDate').value = '';
+    document.getElementById('reportEndDate').value = '';
+    renderLiveActivity();
+}
+
+function downloadReport() {
+    const btn = document.querySelector('#client .btn-outline');
+    const originalText = btn.innerHTML;
+    const startDate = document.getElementById('reportStartDate').value;
+    const endDate = document.getElementById('reportEndDate').value;
+    const rangeText = (startDate && endDate) ? `from ${startDate} to ${endDate}` : "full history";
+
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        alert(`Report downloaded successfully!\n\nScope: ${rangeText}\nFormat: PDF\nSent to: ${USERS['frieza'].email}`);
+    }, 1500);
+}
+
+// --- 8. UTILITIES ---
 function openModal(id) { document.getElementById(id).style.display = 'flex'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 window.onclick = function(e) { if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; }
@@ -384,30 +537,6 @@ function generateFinanceReport(btn) {
     }, 1500);
 }
 
-function scanStaffAI() {
-    const btn = document.querySelector('#scanBtnContainer button');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
-    setTimeout(() => {
-        document.getElementById('scanBtnContainer').style.display = 'none';
-        document.getElementById('aiStaffResult').style.display = 'block';
-        document.getElementById('assignActionBtns').style.display = 'block';
-    }, 1000);
-}
-
-function confirmAssignment() {
-    // Tạo task mới và lưu vào DB chung
-    const taskName = "Design Database Schema";
-    const tasks = JSON.parse(localStorage.getItem('techForgeTasks')) || [];
-    tasks.push({ id: `T-${Date.now().toString().slice(-4)}`, name: taskName, status: 'todo', priority: 'med' });
-    localStorage.setItem('techForgeTasks', JSON.stringify(tasks));
-
-    alert("Task Assigned! Goku will see this immediately.");
-    closeModal('assignTaskModal');
-    // Không cần gọi render vì Event Listener 'storage' sẽ lo việc đó nếu mở tab khác,
-    // hoặc dòng switchView sẽ lo nếu ở cùng tab.
-    renderKanban();
-}
-
 function openProfileModal() {
     const userKey = localStorage.getItem('currentUser');
     const user = USERS[userKey];
@@ -431,4 +560,15 @@ function saveProfile() {
     if(USERS[userKey]) USERS[userKey].rate = newRate;
     alert("Profile Updated!");
     closeModal('profileModal');
+}
+
+// Generate AI mock
+function generateAI() {
+    const loading = document.getElementById('aiLoading');
+    const result = document.getElementById('aiResult');
+    loading.style.display = 'block'; result.style.display = 'none';
+    setTimeout(() => {
+        loading.style.display = 'none'; result.style.display = 'block';
+        result.value = "- Setup React Frontend\n- Integrate Firebase Auth\n- Connect MoMo API\n- Design DB Schema";
+    }, 1500);
 }

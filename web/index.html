@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechForge ERP - Saiyan Edition</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="css/style.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -113,16 +113,13 @@
 
                 <div class="stats-grid">
                     <div class="card stat-card">
-                        <h3>12</h3>
-                        <p>Active Projects</p>
+                        <h3>12</h3><p>Active Projects</p>
                     </div>
                     <div class="card stat-card">
-                        <h3>$45k</h3>
-                        <p>Budget Consumed</p>
+                        <h3>$45k</h3><p>Budget Consumed</p>
                     </div>
                     <div class="card stat-card">
-                        <h3>8</h3>
-                        <p>Pending Review</p>
+                        <h3>8</h3><p>Pending Review</p>
                     </div>
                 </div>
 
@@ -154,31 +151,10 @@
                     <table>
                         <thead>
                         <tr>
-                            <th>Project Name</th>
-                            <th>Client</th>
-                            <th>Budget</th>
-                            <th>Deadline</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>Project Name</th><th>Client</th><th>Budget</th><th>Deadline</th><th>Status</th><th>Action</th>
                         </tr>
                         </thead>
                         <tbody id="projectTableBody">
-                        <tr>
-                            <td><strong>E-Commerce Super App</strong></td>
-                            <td>Bulma Corp</td>
-                            <td>$15,000</td>
-                            <td>Dec 30, 2025</td>
-                            <td><span class="status-badge status-planning">Planning</span></td>
-                            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="openModal('assignTaskModal')">Manage</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>HR System V2</strong></td>
-                            <td>Red Ribbon Army</td>
-                            <td>$8,500</td>
-                            <td>Jan 15, 2026</td>
-                            <td><span class="status-badge status-active">Running</span></td>
-                            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.7rem;" onclick="openModal('assignTaskModal')">Manage</button></td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -190,7 +166,6 @@
                         <h2 style="margin-bottom: 5px; color: var(--secondary); font-weight: 800; border-left: 5px solid var(--primary); padding-left: 15px;">Execution Deck</h2>
                         <p style="color: var(--text-light); margin-left: 20px;">Track your tasks and log your Ki energy (Time)</p>
                     </div>
-
                     <div style="background: rgba(7, 32, 131, 0.1); border: 2px solid var(--secondary); color: var(--secondary); padding: 10px 20px; border-radius: 50px; font-family: 'Courier New', monospace; font-weight: 900; display: flex; align-items: center; gap: 10px;">
                         <div style="width: 10px; height: 10px; background: var(--danger); border-radius: 50%; animation: pulse 1s infinite;"></div>
                         <span id="timerDisplay">00:00:00</span>
@@ -252,11 +227,7 @@
                     <table>
                         <thead>
                         <tr>
-                            <th>Employee</th>
-                            <th>Role</th>
-                            <th>Total Hours</th>
-                            <th>Amount ($)</th>
-                            <th>Status</th>
+                            <th>Employee</th><th>Role</th><th>Total Hours</th><th>Amount ($)</th><th>Status</th>
                         </tr>
                         </thead>
                         <tbody id="payrollTableBody">
@@ -277,7 +248,6 @@
                 </div>
 
                 <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
-
                     <div style="display: flex; flex-direction: column; gap: 20px;">
                         <div class="card">
                             <h3 style="margin-bottom: 15px;"><i class="fas fa-users"></i> Team Progress</h3>
@@ -285,7 +255,6 @@
                                 <canvas id="teamProgressChart"></canvas>
                             </div>
                         </div>
-
                         <div class="card" style="flex: 1;">
                             <h3 style="margin-bottom: 15px;"><i class="fas fa-stream"></i> Project Timeline (Gantt)</h3>
                             <div style="height: 250px; position: relative;">
@@ -298,45 +267,31 @@
                         <h3 style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
                             <i class="fas fa-bolt"></i> Live Activity
                         </h3>
-                        <ul style="list-style:none; padding:0; font-size: 0.9rem;">
-                            <li style="padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px dashed #eee; display: flex; gap: 10px;">
-                                <div style="width: 30px; height: 30px; background: #E0F2FE; color: #0284C7; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 700; color: var(--text-main);">Module "API Auth" Completed</div>
-                                    <div style="color: var(--text-light); font-size: 0.8rem;">By Dev Team • 2 hours ago</div>
-                                </div>
-                            </li>
-                            <li style="padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px dashed #eee; display: flex; gap: 10px;">
-                                <div style="width: 30px; height: 30px; background: #FEF3C7; color: #D97706; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <i class="fas fa-pen"></i>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 700; color: var(--text-main);">Requirements Updated</div>
-                                    <div style="color: var(--text-light); font-size: 0.8rem;">By Project Manager • Yesterday</div>
-                                </div>
-                            </li>
-                            <li style="display: flex; gap: 10px;">
-                                <div style="width: 30px; height: 30px; background: #DCFCE7; color: #16A34A; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <i class="fas fa-rocket"></i>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 700; color: var(--text-main);">Milestone 1 Achieved</div>
-                                    <div style="color: var(--text-light); font-size: 0.8rem;">System • Oct 20, 2023</div>
-                                </div>
-                            </li>
+
+                        <div style="background: #F3F4F6; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #E5E7EB;">
+                            <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-light); display: block; margin-bottom: 5px;">
+                                <i class="fas fa-search"></i> Find past activities:
+                            </label>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="date" id="reportStartDate" onchange="renderLiveActivity()" style="width: 50%; padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 0.8rem;">
+                                <input type="date" id="reportEndDate" onchange="renderLiveActivity()" style="width: 50%; padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 0.8rem;">
+                            </div>
+                            <div style="text-align: right; margin-top: 5px;">
+                                <small style="color: var(--text-light); cursor: pointer; text-decoration: underline;" onclick="clearActivityFilter()">Clear Filter</small>
+                            </div>
+                        </div>
+
+                        <ul id="activityList" style="list-style:none; padding:0; font-size: 0.9rem; max-height: 400px; overflow-y: auto;">
                         </ul>
 
                         <div style="margin-top: 30px;">
-                            <button class="btn btn-outline" style="width:100%; justify-content: center;">
-                                <i class="fas fa-file-pdf"></i> Download Weekly Report
+                            <button class="btn btn-outline" style="width:100%; justify-content: center;" onclick="downloadReport()">
+                                <i class="fas fa-file-pdf"></i> Download Report
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
-
         </div>
     </div>
 </div>
@@ -346,12 +301,10 @@
         <h2 style="border: none; margin-bottom: 10px; color: var(--secondary);">
             <i class="fas fa-plus-circle"></i> Create New Project
         </h2>
-
         <div class="form-group">
             <label>Project Name <span style="color:red">*</span></label>
             <input type="text" id="projName" placeholder="e.g., Capsule Corp Website">
         </div>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="form-group">
                 <label>Budget ($) <span style="color:red">*</span></label>
@@ -362,29 +315,24 @@
                 <input type="date" id="projDeadline">
             </div>
         </div>
-
         <div class="form-group">
-            <label>Client Email</label>
-            <input type="email" placeholder="client@example.com">
+            <label>Client Email <span style="color:red">*</span></label>
+            <input type="email" id="clientEmail" placeholder="client@gmail.com">
+            <small style="color: var(--text-light); font-size: 0.75rem;">* Must be a @gmail.com address</small>
         </div>
-
         <div class="form-group">
             <label>Description (for AI)</label>
             <textarea rows="3" id="projDesc" placeholder="Describe the mission details..."></textarea>
         </div>
-
         <div class="ai-box">
             <strong><i class="fas fa-magic"></i> AI Assistant (Gemini)</strong>
             <small>Auto-generate Work Breakdown Structure (WBS) from description.</small>
             <div style="margin-top: 5px;">
-                <button class="btn btn-outline" style="background: white; padding: 5px 10px; font-size: 0.8rem;" onclick="generateAI()">
-                    ✨ Generate Tasks
-                </button>
+                <button class="btn btn-outline" style="background: white; padding: 5px 10px; font-size: 0.8rem;" onclick="generateAI()">✨ Generate Tasks</button>
             </div>
             <p id="aiLoading" class="loading-text" style="font-size: 0.8rem; margin-top:5px;">Summoning Shenron... (Processing)</p>
             <textarea id="aiResult" rows="3" style="display: none; width: 100%; border-radius: 4px; border: 1px solid #ddd; padding: 8px; font-size: 0.85rem; margin-top: 5px;"></textarea>
         </div>
-
         <div style="text-align:right; margin-top: 20px;">
             <button class="btn" style="background: #e5e7eb; margin-right: 10px;" onclick="closeModal('createProjectModal')">Cancel</button>
             <button class="btn btn-primary" onclick="saveProject()">Create Project</button>
@@ -399,9 +347,14 @@
         </h2>
         <p style="color: var(--text-light); margin-bottom: 20px;">AI is scanning power levels (skills) to find the best match...</p>
 
+        <input type="hidden" id="assignProjectRef">
         <div class="form-group">
-            <label>Task Name</label>
-            <input type="text" value="Design Database Schema" readonly style="background: #F3F4F6;">
+            <label>Task Name <span style="color:red">*</span></label>
+            <input type="text" id="assignTaskInput" placeholder="e.g. Implement Login API">
+        </div>
+        <div class="form-group">
+            <label>Description / Requirements</label>
+            <textarea id="assignTaskDesc" rows="2" placeholder="Details about this mission..."></textarea>
         </div>
 
         <div id="aiStaffResult" class="ai-box" style="display:none; border-color: var(--success); background: #ECFDF5;">
@@ -417,9 +370,7 @@
         </div>
 
         <div style="text-align:center; margin-top: 20px;" id="scanBtnContainer">
-            <button class="btn btn-warning" onclick="scanStaffAI()">
-                <i class="fas fa-radar"></i> Scan Power Levels
-            </button>
+            <button class="btn btn-warning" onclick="scanStaffAI()"><i class="fas fa-radar"></i> Scan Power Levels</button>
         </div>
 
         <div style="text-align:right; margin-top: 20px; display: none;" id="assignActionBtns">
@@ -429,11 +380,33 @@
     </div>
 </div>
 
+<div id="taskDetailModal" class="modal-overlay">
+    <div class="modal">
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+            <h2 id="detailTitle" style="color: var(--primary); margin-bottom: 5px;">Task Title</h2>
+            <button onclick="closeModal('taskDetailModal')" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <span id="detailProject" class="status-badge status-planning">Project Name</span>
+            <span id="detailStatus" class="status-badge status-active" style="margin-left: 10px;">Status</span>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <div id="detailDesc" style="background: #F9FAFB; padding: 15px; border-radius: 8px; border: 1px solid #E5E7EB; min-height: 80px; font-size: 0.95rem;">...</div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+            <div><label style="font-size:0.8rem; color:var(--text-light)">Assignee</label><div style="font-weight:bold;"><i class="fas fa-user-circle"></i> Son Goku</div></div>
+            <div><label style="font-size:0.8rem; color:var(--text-light)">Priority</label><div id="detailPriority" style="font-weight:bold; color:var(--danger)">High</div></div>
+        </div>
+        <div style="text-align:right; margin-top: 20px;">
+            <button class="btn btn-primary" onclick="closeModal('taskDetailModal')">Close</button>
+        </div>
+    </div>
+</div>
+
 <div id="logTimeModal" class="modal-overlay">
     <div class="modal">
-        <h2 style="border: none; margin-bottom: 10px;">
-            <i class="fas fa-clock"></i> Log Training Time
-        </h2>
+        <h2 style="border: none; margin-bottom: 10px;"><i class="fas fa-clock"></i> Log Training Time</h2>
         <div class="form-group">
             <label>Task</label>
             <select>
@@ -473,39 +446,27 @@
     <div class="modal">
         <div style="text-align: center; margin-bottom: 20px; position: relative;">
             <h2 style="border: none; color: var(--secondary); margin-bottom: 5px;">Hồ Sơ Nhân Sự</h2>
-            <p style="color: var(--text-light); font-size: 0.9rem;">Quản lý thông tin & Kỹ năng</p>
             <button onclick="closeModal('profileModal')" style="position: absolute; right: 0; top: 0; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);">&times;</button>
         </div>
-
         <div style="text-align: center; margin-bottom: 25px;">
             <img id="profileAvatarPreview" src="" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            <div style="margin-top: 10px; font-weight: 800; font-size: 1.2rem; color: var(--text-main);" id="profileNameDisplay">Vegeta</div>
-            <div style="font-size: 0.9rem; color: var(--text-light); background: #eee; display: inline-block; padding: 2px 10px; border-radius: 12px; margin-top: 5px;" id="profileRoleDisplay">CEO</div>
+            <div style="margin-top: 10px; font-weight: 800; font-size: 1.2rem; color: var(--text-main);" id="profileNameDisplay">Name</div>
+            <div style="font-size: 0.9rem; color: var(--text-light); background: #eee; display: inline-block; padding: 2px 10px; border-radius: 12px; margin-top: 5px;" id="profileRoleDisplay">Role</div>
         </div>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="text" id="profileEmail" value="" readonly style="background: #f9fafb; cursor: not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-dollar-sign"></i> Hourly Rate ($/hr)</label>
-                    <input type="number" id="profileRate" value="" style="font-weight: bold; color: var(--success);">
-                </div>
+                <div class="form-group"><label><i class="fas fa-envelope"></i> Email</label><input type="text" id="profileEmail" value="" readonly style="background: #f9fafb; cursor: not-allowed;"></div>
+                <div class="form-group"><label><i class="fas fa-dollar-sign"></i> Hourly Rate ($/hr)</label><input type="number" id="profileRate" value="" style="font-weight: bold; color: var(--success);"></div>
             </div>
-
             <div>
                 <label style="display: block; margin-bottom: 8px; font-weight: 700; color: var(--secondary);"><i class="fas fa-laptop-code"></i> Skill Matrix</label>
-                <div id="skillList" style="background: #F3F4F6; padding: 10px; border-radius: 8px; height: 130px; overflow-y: auto; border: 1px solid #E5E7EB;">
-                </div>
+                <div id="skillList" style="background: #F3F4F6; padding: 10px; border-radius: 8px; height: 130px; overflow-y: auto; border: 1px solid #E5E7EB;"></div>
                 <div style="display: flex; gap: 5px; margin-top: 10px;">
                     <input type="text" placeholder="Add skill..." style="padding: 5px; border: 1px solid #ddd; border-radius: 4px; flex: 1; font-size: 0.8rem;">
                     <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;">+</button>
                 </div>
             </div>
         </div>
-
         <div style="text-align: right; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
             <button class="btn btn-outline" onclick="closeModal('profileModal')">Hủy</button>
             <button class="btn btn-primary" onclick="saveProfile()">Lưu Thay Đổi</button>
